@@ -1,6 +1,7 @@
 import { useRef, useState}  from 'react'
 import { Button, Image, ImageViewer,Toast, Result }from 'antd-mobile'
 import styles from './index.less'
+import { getRealStr } from '@/utils'
 interface Props { 
   code?: string
   name?: string
@@ -20,7 +21,7 @@ const SkuInfo = (props:Props) => {
       needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
       // scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
       success: function (res:any) {
-        pickSku2Cell(res.resultStr?.split(",")?.[1])
+        pickSku2Cell(getRealStr(res.resultStr))
       },
       error: function(){
         Toast.show({

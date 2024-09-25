@@ -1,6 +1,7 @@
 import { useRef, useState}  from 'react'
 import {Button, Image, SearchBar, ImageViewer,Toast }from 'antd-mobile'
 import { ScanningOutline } from 'antd-mobile-icons';
+import { getRealStr } from '@/utils'
 import "@/global.css"
 import styles from './index.less'
 import SkuInfo from './components/SkuInfo/index';
@@ -18,7 +19,8 @@ const Scan = () => {
       success: function (res:any) {
         // 接口请求sku信息
         // setSkuCode(res.resultStr)
-        setSkuInfo({code: res.resultStr?.split(",")?.[1]})
+        const realStr = getRealStr(res.resultStr)
+        setSkuInfo({code: realStr})
       },
       error: function(){
         Toast.show({
