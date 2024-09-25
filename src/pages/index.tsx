@@ -18,7 +18,7 @@ const Scan = () => {
       success: function (res:any) {
         // 接口请求sku信息
         // setSkuCode(res.resultStr)
-        setSkuInfo({code: res.resultStr})
+        setSkuInfo({code: res.resultStr?.split(",")?.[1]})
       },
       error: function(){
         Toast.show({

@@ -6,7 +6,8 @@ import { getAccessToken, getTicket } from '../server/sign';
 import Crypto from "crypto-js"
 import styles from './index.less';
 
-const right = (<span>userName</span>)
+
+const node_env = process.env.NODE_ENV
 
 
 export default function Layout() {
@@ -15,7 +16,8 @@ export default function Layout() {
   const timestamp = useRef(Math.round(+new Date() / 1000))
   useEffect(()=>{
     const ua = navigator.userAgent.toLowerCase();
-    if (ua.indexOf('micromessenger') !== -1) {
+
+    if (ua.indexOf('micromessenger') !== -1  || node_env === "development") {
       //在微信中
       getAccessToken().then(res => {
         setToken(res.access_token)
