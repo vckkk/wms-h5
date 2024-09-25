@@ -37,7 +37,7 @@ export default function Layout() {
   useEffect(()=>{
     if(window.wx && token){
       window.wx.config({
-        debug: true,
+        debug: false,
         appId: "wx25ee9435260b2b40",
         timestamp: timestamp.current,
         nonceStr: "nonceStrnonceStr",
