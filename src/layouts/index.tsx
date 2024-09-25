@@ -3,27 +3,35 @@ import { Link, Outlet } from 'umi';
 import { NavBar, SafeArea } from 'antd-mobile'
 import { useEffect, useRef, useState } from "react";
 import { getAccessToken, getTicket } from '../server/sign';
-
+import Crypto from "crypto-js"
 import styles from './index.less';
 
 const right = (<span>userName</span>)
 
+
 export default function Layout() {
   const [token, setToken] = useState(null)
-  const [sign, setSign] = useState(null)
+  const [sign, setSign] = useState<string | null>(null)
   const timestamp = useRef(Math.round(+new Date() / 1000))
-  // useEffect(()=>{
-  //   getAccessToken().then(res => {
-  //     setToken(res.access_token)
-  //     console.log(timestamp.current,1);
-  //     getTicket({access_token: res.access_token, type:"jsapi"}).then(res => {
-  //       const o = `jsapi_ticket=${res.ticket}&noncestr=nonceStrnonceStr&timestamp=${timestamp.current}&url=http://www.countmeout.top/`
-  //       const sign = Crypto.SHA1(o).toString();
-  //       setSign(sign);
-  //     })
+  useEffect(()=>{
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf('micromessenger') !== -1) {
+      //在微信中
+      getAccessToken().then(res => {
+        setToken(res.access_token)
+        console.log(timestamp.current,1);
+        getTicket({access_token: res.access_token, type:"jsapi"}).then(res => {
+          const o = `jsapi_ticket=${res.ticket}&noncestr=nonceStrnonceStr&timestamp=${timestamp.current}&url=http://www.countmeout.top/`
+          const sign = Crypto.SHA1(o).toString();
+          setSign(sign);
+        })
+      })
+    } else {
+      //不在微信中
+      window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx25ee9435260b2b40&redirect_uri=http://www.countmeout.top/&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+    }
 
-  //   })
-  // },[])
+  },[])
   useEffect(()=>{
     if(window.wx && token){
       window.wx.config({
@@ -32,7 +40,7 @@ export default function Layout() {
         timestamp: timestamp.current,
         nonceStr: "nonceStrnonceStr",
         signature: sign,
-        jsApiList:["login","scanQRCode"]
+        jsApiList:["scanQRCode"]
       })
       window.wx.ready(function(){
         // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
@@ -54,7 +62,9 @@ export default function Layout() {
   return (
     <div>
       <SafeArea position='top' />
+      <div className={styles.container}>
         <Outlet />
+      </div>
       <SafeArea position='bottom' />
     </div>
   );
