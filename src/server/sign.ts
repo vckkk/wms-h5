@@ -1,4 +1,4 @@
-import request from "./request";
+import request from "umi-request";
 import { APP_ID, SK } from '@/CONST'
 //https://api.weixin.qq.com/cgi-bin
 export const getAccessToken = () => request.get("http://www.countmeout.top/bff/api/token", {

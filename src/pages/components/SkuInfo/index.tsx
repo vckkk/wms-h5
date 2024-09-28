@@ -1,10 +1,19 @@
 import { useRef, useState}  from 'react'
-import { Button, Image, ImageViewer,Toast, Result }from 'antd-mobile'
+import { Button, Image, ImageViewer,Toast, Result,Tag }from 'antd-mobile'
 import styles from './index.less'
 import { getRealStr } from '@/utils'
 interface Props { 
-  code?: string
-  name?: string
+  ext_sku: string
+  aggregation_status: string
+  ext_skuinfos: string
+  image_url: string
+  order_id: string
+  order_name: string
+  position: number
+  purchase_id:string
+  quality_check_operator: number
+  quantity: number
+  variant_id: string
   isShow?: boolean,
   setSkuInfo:(info:any)=>{}
   onFocusHandle:()=>{}
@@ -59,24 +68,31 @@ const SkuInfo = (props:Props) => {
           }
         />
         : <div>
-            <Image fit='fill'  height={220} onClick={()=>setViewVisible(true)} src='https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=60'/>
-            <div>
-              <h3>订单号-行号</h3>
-              <div>{code}</div>
-              <div>xxx</div>
-              <div>xxx</div>
-              <div>xxx</div>
+            <Image fit='fill'  height={220} onClick={()=>setViewVisible(true)} src={props?.image_url} />
+            <div style={{fontSize: 18}}>
+              <h3>{props?.order_name} - {props?.position}</h3>
+              <div>{props.ext_sku}</div>
+              <div>数量：{props?.quantity}</div>
+              <div>变体名：
+                {
+                  props?.ext_skuinfos && JSON.parse(props?.ext_skuinfos).map((item:any)=>{
+                    return <span>{item?.name}-{item?.value}</span>
+                  })
+                }
+              </div>
+              <div style={{display:'flex', alignItems:'center'}}>分拣状态：{props?.aggregation_status === "unfinished" ? <Tag style={{fontSize: 17}} color='danger'>未分拣</Tag> : <Tag style={{fontSize: 17}} color='success'>已分拣</Tag>}</div>
+              <div>分拣人：{props?.quality_check_operator} </div>
             </div>
             <ImageViewer 
               visible={viewVisible} 
-              image='https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=60'
+              image={props?.image_url}
               onClose={()=>{
                 setViewVisible(false)
               }}
               />
             <div className={styles.btmOpt}>
               <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
-              <Button color='primary' onClick={onScanPickHandle}>分拣扫码</Button>
+              <Button color='primary' disabled={props?.aggregation_status !== "unfinished"} onClick={onScanPickHandle}>分拣扫码</Button>
               {/* <Button color='primary' onClick={() => pickSku2Cell()}>拣货扫扫码</Button> */}
             </div>
         </div>

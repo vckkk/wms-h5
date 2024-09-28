@@ -18,10 +18,6 @@ export default defineConfig({
       minPixelValue: 1, // 小于或等于 `1px` 不转换为视口单位，你也可以设置为你想要的值
       mediaQuery: true, // 允许在媒体查询中转换 `px`
     }),
-    // require('postcss-pxtorem')({
-    //   rootValue: 14,
-    //   propList: ['*']
-    // })
   ],
   alias: {
     '@': path.resolve(__dirname, 'src'), // 设置别名以便于引用项目中的资源文件等。
@@ -31,17 +27,5 @@ export default defineConfig({
       src: "https://res.wx.qq.com/open/js/jweixin-1.6.0.js",
       type: "text/javascript"
     }
-  ],
-  proxy: {
-    "/token": {
-      target: "https://api.weixin.qq.com/cgi-bin/token",
-      changeOrigin: true,
-      'pathRewrite': { '^/token' : '' },
-    },
-    "/getticket": {
-      target: "https://api.weixin.qq.com/cgi-bin/ticket/getticket",
-      changeOrigin: true,
-      'pathRewrite': { '^/getticket' : '' },
-    }
-  }
+  ]
 });
