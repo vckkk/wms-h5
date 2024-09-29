@@ -20,8 +20,8 @@ const Scan = () => {
       success: function (res:any) {
         // 接口请求sku信息
         const realStr = getRealStr(res.resultStr)
-        setSkuCode(realStr)
-        getSkuInfo()
+        // setSkuCode(realStr)
+        getSkuInfo(realStr)
       },
       error: function(){
         Toast.show({
@@ -37,13 +37,16 @@ const Scan = () => {
   const onSearchHandle = () => {
     getSkuInfo()
   }
-  const getSkuInfo = () => {
+  const getSkuInfo = (params?: string) => {
     //fetch 后清空value
     setLoading(true)
-    scanSku({"order_name_position": skuCode}).then((res:any) => {
+    scanSku({"order_name_position": params || skuCode}).then((res:any) => {
       setSkuCode("")
-      console.log(res,"res");
-      setSkuInfo(res?.result?.[0])
+      if(res.success === true) {
+        setSkuInfo(res?.result)
+      } else {
+        setSkuInfo({})
+      }
     }).finally(() => {
       setLoading(false)
     })

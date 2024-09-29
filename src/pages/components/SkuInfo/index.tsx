@@ -2,6 +2,7 @@ import { useRef, useState}  from 'react'
 import { Button, Image, ImageViewer,Toast, Result,Tag }from 'antd-mobile'
 import styles from './index.less'
 import { getRealStr } from '@/utils'
+import { pickOrder } from '@/server/scanPick'
 interface Props { 
   ext_sku: string
   aggregation_status: string
@@ -30,7 +31,7 @@ const SkuInfo = (props:Props) => {
       needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
       // scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
       success: function (res:any) {
-        pickSku2Cell(getRealStr(res.resultStr))
+        pickSku2Cell(+getRealStr(res.resultStr))
       },
       error: function(){
         Toast.show({
@@ -41,13 +42,15 @@ const SkuInfo = (props:Props) => {
     })
   }
 
-  const pickSku2Cell = (code:string = 'success') => {
+  const pickSku2Cell = (code:number = 1) => {
     // fetch 
-    if (code === 'success'){
-      setResult({status: 'success',title: "放入成功"})
-    } else {
-      setResult({status: 'error',title: "放入错误"})
-    }
+    pickOrder({order_id: props?.order_id, index: code}).then(res => {
+      if (res.success === true){
+        setResult({status: 'success',title: "放入成功"})
+      } else {
+        setResult({status: 'error',title: `放入错误,${res.error_message}`})
+      }
+    })
   }
 
   const backToScan = () => {

@@ -13,18 +13,20 @@ const errorHandle = (error: any) => {
 
 
 
-const request = extend({ use: [errorHandle],prefix: "http://121.40.24.145/dev" });
+const request = extend({ use: [errorHandle],prefix: "http://112.124.63.126/dev" });
 request.interceptors.response.use(async (res, req): Promise<any> => {
   const t = await res.clone().json();
   if(t?.success === false){
-    Toast.show({
+    const s = Toast.show({
       icon: 'fail',
       content: t?.error_message,
-      duration: 2000
+      duration:0
     })
+    setTimeout(() => {
+      s.close()
+    }, 2000)
   }
-
-  return res
+  return t
 })
 
 export default request ;

@@ -7,3 +7,9 @@ export const scanSku = (params: any) => {
   })
 }
 
+export const pickOrder = (params: any) => {
+  return request("/api/v1/order-operation/update-aggregation-status",{
+    method: "POST",
+    data: params
+  })
+}
