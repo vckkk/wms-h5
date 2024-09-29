@@ -11,9 +11,15 @@ const errorHandle = (error: any) => {
   }
 }
 
+const getApiPrefixByDomain = () => {
+  const host = window.location?.host;
+  if (host === 'www.countmeout.top') {
+    return 'http://112.124.63.126';
+  }
+  return 'http://112.124.63.126/dev';
+}
 
-
-const request = extend({ use: [errorHandle],prefix: "http://112.124.63.126/dev" });
+const request = extend({ use: [errorHandle],prefix: getApiPrefixByDomain() });
 request.interceptors.response.use(async (res, req): Promise<any> => {
   const t = await res.clone().json();
   if(t?.success === false){
