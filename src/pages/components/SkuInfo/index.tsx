@@ -14,6 +14,7 @@ interface Props {
   purchase_id:string
   quality_check_operator: number
   quantity: number
+  order_index: number
   variant_id: string
   isShow?: boolean,
   setSkuInfo:(info:any)=>{}
@@ -42,9 +43,9 @@ const SkuInfo = (props:Props) => {
     })
   }
 
-  const pickSku2Cell = (code:number = 1) => {
+  const pickSku2Cell = (code:string) => {
     // fetch 
-    pickOrder({order_id: props?.order_id, index: code}).then(res => {
+    pickOrder({order_index: props?.order_index, order_name: code }).then(res => {
       if (res.success === true){
         setResult({status: 'success',title: "放入成功"})
       } else {
@@ -71,10 +72,10 @@ const SkuInfo = (props:Props) => {
           }
         />
         : <div>
-            <Image fit='fill'  height={220} onClick={()=>setViewVisible(true)} src={props?.image_url} />
+            <Image fit='fill'  height={300} onClick={()=>setViewVisible(true)} src={props?.image_url} />
             <div style={{fontSize: 18}}>
-              <h3>{props?.order_name} - {props?.position}</h3>
-              <div>{props.ext_sku}</div>
+              <div className={styles.skuName}>{props?.order_name}-{props?.position}</div>
+              <div>SKU编码：{props.ext_sku}</div>
               <div>数量：{props?.quantity}</div>
               <div>变体名：
                 {
@@ -96,7 +97,7 @@ const SkuInfo = (props:Props) => {
             <div className={styles.btmOpt}>
               <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
               <Button color='primary' disabled={props?.aggregation_status !== "unfinished"} onClick={onScanPickHandle}>分拣扫码</Button>
-              {/* <Button color='primary' onClick={() => pickSku2Cell()}>拣货扫扫码</Button> */}
+              {/* <Button color='primary' onClick={() => pickSku2Cell("3001")}>拣货扫扫码</Button> */}
             </div>
         </div>
       }
