@@ -1,5 +1,5 @@
 import { useRef, useState}  from 'react'
-import { Button, Image, ImageViewer,Toast, Result,Tag }from 'antd-mobile'
+import { Button, Image, ImageViewer,Toast, Result,Tag, Input }from 'antd-mobile'
 import styles from './index.less'
 import { getRealStr } from '@/utils'
 import { pickOrder } from '@/server/scanPick'
@@ -22,17 +22,17 @@ interface Props {
 }
 
 const SkuInfo = (props:Props) => {
-  const { setSkuInfo,onFocusHandle, code } = props;
+  const { setSkuInfo,onFocusHandle } = props;
   const [viewVisible, setViewVisible] = useState(false)
   const [result, setResult] = useState<any>({})
-
+  const [testStr, setTestStr] = useState<any>("")
     // 分拣扫码
   const onScanPickHandle = () => {
     window.wx.scanQRCode({
       needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
       // scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
       success: function (res:any) {
-        pickSku2Cell(+getRealStr(res.resultStr))
+        pickSku2Cell(getRealStr(res.resultStr))
       },
       error: function(){
         Toast.show({
@@ -46,6 +46,7 @@ const SkuInfo = (props:Props) => {
   const pickSku2Cell = (code:string) => {
     // fetch 
     pickOrder({order_index: props?.order_index, order_name: code }).then(res => {
+      console.log(res,"???");
       if (res.success === true){
         setResult({status: 'success',title: "放入成功"})
       } else {
@@ -97,7 +98,7 @@ const SkuInfo = (props:Props) => {
             <div className={styles.btmOpt}>
               <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
               <Button color='primary' disabled={props?.aggregation_status !== "unfinished"} onClick={onScanPickHandle}>分拣扫码</Button>
-              {/* <Button color='primary' onClick={() => pickSku2Cell("3001")}>拣货扫扫码</Button> */}
+              {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
             </div>
         </div>
       }

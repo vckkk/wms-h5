@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Crypto from "crypto-js"
 import styles from './index.less';
 import { getSign } from '@/server/sign';
+import VConsole from 'vconsole'
 
 
 const node_env = process.env.NODE_ENV
@@ -32,6 +33,10 @@ export default function Layout() {
       getSign({url: window.location.href}).then(res => {
         setSign(res?.result)
       })
+      const host = window.location?.host;
+      if (host !== 'www.countmeout.top') {
+        const vConsole = new VConsole({ theme: 'dark' });
+      }
     } else {
       //不在微信中
       window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx25ee9435260b2b40&redirect_uri=http://www.countmeout.top/&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
