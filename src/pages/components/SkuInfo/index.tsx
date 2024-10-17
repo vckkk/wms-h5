@@ -19,6 +19,7 @@ interface Props {
   isShow?: boolean,
   setSkuInfo:(info:any)=>{}
   onFocusHandle:()=>{}
+  orderName: any
 }
 
 const SkuInfo = (props:Props) => {
@@ -28,25 +29,14 @@ const SkuInfo = (props:Props) => {
   const [testStr, setTestStr] = useState<any>("")
     // 分拣扫码
   const onScanPickHandle = () => {
-    window.wx.scanQRCode({
-      needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-      // scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-      success: function (res:any) {
-        pickSku2Cell(getRealStr(res.resultStr))
-      },
-      error: function(){
-        Toast.show({
-          icon: 'fail',
-          content: '扫码失败,请重试',
-        })
-      }
-    })
+    // 先确认放入
+    pickSku2Cell()
+    props.onFocusHandle()
   }
 
-  const pickSku2Cell = (code:string) => {
+  const pickSku2Cell = () => {
     // fetch 
-    pickOrder({order_index: props?.order_index, order_name: code }).then(res => {
-      console.log(res,"???");
+    pickOrder({order_index: props?.order_index, order_name: props?.orderName }).then(res => {
       if (res.success === true){
         setResult({status: 'success',title: "放入成功"})
       } else {
@@ -57,7 +47,7 @@ const SkuInfo = (props:Props) => {
 
   const backToScan = () => {
     setSkuInfo({})
-    onFocusHandle()
+    // onFocusHandle()
   }
 
   return (
@@ -97,7 +87,7 @@ const SkuInfo = (props:Props) => {
               />
             <div className={styles.btmOpt}>
               <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
-              <Button color='primary' disabled={props?.aggregation_status !== "unfinished"} onClick={onScanPickHandle}>分拣扫码</Button>
+              <Button color='primary' fill='outline' onClick={onScanPickHandle}>确认，继续扫</Button>
               {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
             </div>
         </div>
