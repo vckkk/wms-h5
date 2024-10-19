@@ -55,7 +55,7 @@ const Scan = () => {
 
   const getSkuInfo = (code: string) => {
     setLoading(true)
-    scanSku({"order_index": code}).then((res:any) => {
+    scanSku({"order_index": code, "order_name": orderName}).then((res:any) => {
       if(res.success === true) {
         setSkuInfo(res?.result)
       } else {

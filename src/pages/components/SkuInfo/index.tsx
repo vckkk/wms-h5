@@ -31,14 +31,13 @@ const SkuInfo = (props:Props) => {
   const onScanPickHandle = () => {
     // 先确认放入
     pickSku2Cell()
-    props.onFocusHandle()
   }
 
   const pickSku2Cell = () => {
     // fetch 
     pickOrder({order_index: props?.order_index, order_name: props?.orderName }).then(res => {
       if (res.success === true){
-        setResult({status: 'success',title: "放入成功"})
+        props.onFocusHandle()
       } else {
         setResult({status: 'error',title: `放入错误,${res.error_message}`})
       }
@@ -87,7 +86,7 @@ const SkuInfo = (props:Props) => {
               />
             <div className={styles.btmOpt}>
               <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
-              <Button color='primary' fill='outline' onClick={onScanPickHandle}>确认，继续扫</Button>
+              <Button color='primary' disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</Button>
               {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
             </div>
         </div>
