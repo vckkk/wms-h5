@@ -13,6 +13,7 @@ interface Props {
   position: number
   purchase_id:string
   quality_check_operator: number
+  aggregation_time: string
   quantity: number
   order_index: number
   variant_id: string
@@ -76,6 +77,7 @@ const SkuInfo = (props:Props) => {
               </div>
               <div style={{display:'flex', alignItems:'center'}}>分拣状态：{props?.aggregation_status === "unfinished" ? <Tag style={{fontSize: 17}} color='danger'>未分拣</Tag> : <Tag style={{fontSize: 17}} color='success'>已分拣</Tag>}</div>
               <div>分拣人：{props?.quality_check_operator} </div>
+              <div>分拣时间：{props?.aggregation_time ? new Date(props?.aggregation_time).toLocaleString() : "-"}</div>
             </div>
             <ImageViewer 
               visible={viewVisible} 

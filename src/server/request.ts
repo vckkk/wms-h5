@@ -25,7 +25,7 @@ request.interceptors.response.use(async (res, req): Promise<any> => {
   if(t?.success === false){
     const s = Toast.show({
       icon: 'fail',
-      content: t?.error_message,
+      content: t?.error_message ,
       duration:0
     })
     setTimeout(() => {

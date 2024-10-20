@@ -82,7 +82,7 @@ const Scan = () => {
         </div>
         }
       </div>
-      {/* <Button  color='primary' onClick={()=> getSkuInfo("15623")} block>测试</Button> */}
+      {/* <Button  color='primary' onClick={()=> getSkuInfo("15367")} block>测试</Button> */}
       {orderName && !skuInfo.ext_sku  && <Button className={styles.btnBack} size='large' color='primary' onClick={()=>setOrderName("")} block>返回</Button>}
     </div>
   )
