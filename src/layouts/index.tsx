@@ -91,8 +91,10 @@ export default function Layout() {
   },[sign])
 
   const onCloseHandle = () => {
-    if(!localStorage.getItem("username")){
+    if(!localStorage.getItem("userId")){
       setPickerVisible(true)
+    } else {
+      setPickerVisible(false)
     }
   }
   return (
@@ -110,6 +112,7 @@ export default function Layout() {
           localStorage.setItem("userId", v?.[0].toString())
           localStorage.setItem("username", userList.find((i: any) => i?.id === v[0])?.name)
         }} 
+          // style={{"--item-height": "44px"}}
           closeOnMaskClick={false} 
           cancelText={null} 
           onClose={onCloseHandle} 
