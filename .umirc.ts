@@ -5,7 +5,8 @@ export default defineConfig({
   title: "商品分拣",
   routes: [
     { path: "/", component: "index" },
-    // { path: "/scanSKU", component: "scan", title:"商品分拣" },
+    { path: "/pick", component: "@/pages/pick", title:"商品分拣" },
+
   ],
   npmClient: 'yarn',
   extraPostCSSPlugins: [

@@ -22,3 +22,7 @@ export const getSign = (params: any) => {
     params
   })
 }
+
+export const getUsers = () => {
+  return request("/api/v1/order-operation/operator-list")
+}

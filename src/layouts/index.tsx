@@ -1,11 +1,11 @@
 
 import { Link, Outlet } from 'umi';
-import { NavBar, SafeArea } from 'antd-mobile'
+import { NavBar, Picker, SafeArea, Toast } from 'antd-mobile'
 import { useEffect, useRef, useState } from "react";
 // import { getAccessToken, getTicket } from '../server/sign';
 import Crypto from "crypto-js"
 import styles from './index.less';
-import { getSign } from '@/server/sign';
+import { getSign, getUsers } from '@/server/sign';
 import VConsole from 'vconsole'
 
 
@@ -15,7 +15,9 @@ const node_env = process.env.NODE_ENV
 export default function Layout() {
   const [token, setToken] = useState(null)
   const [sign, setSign] = useState<any>(null)
+  const [pickerVisible, setPickerVisible] = useState(false);
   const timestamp = useRef(Math.round(+new Date() / 1000))
+  const [userList, setUserList] = useState<Array<any>>([])
   useEffect(()=>{
     const ua = navigator.userAgent.toLowerCase();
 
@@ -39,10 +41,25 @@ export default function Layout() {
       }
     } else {
       //不在微信中
-      window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx25ee9435260b2b40&redirect_uri=http://www.countmeout.top/&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+      // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx25ee9435260b2b40&redirect_uri=http://www.countmeout.top/&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
     }
-
+    getUsers().then(res => {
+      if(res?.result.length > 0) {
+        setUserList(res.result)
+        localStorage.setItem("users", JSON.stringify(res?.result.map(i => {
+          return { label: i?.name, value: i?.id }
+        })))
+      }
+    })
   },[])
+
+  useEffect(()=>{
+    if(!pickerVisible && !localStorage.getItem("username")){
+      Toast.show({content: '请先登录', position: 'top'})
+      setPickerVisible(true)
+    }
+  },[pickerVisible])
+
   useEffect(()=>{
     if(window.wx && sign){
       window.wx.config({
@@ -72,11 +89,32 @@ export default function Layout() {
       }); 
     }
   },[sign])
+
+  const onCloseHandle = () => {
+    if(!localStorage.getItem("username")){
+      setPickerVisible(true)
+    }
+  }
   return (
     <div>
       <SafeArea position='top' />
       <div className={styles.container}>
+        <div className={styles.nav}>
+          <span onClick={() => setPickerVisible(true)}>{localStorage.getItem("username") || '未登录'}</span>
+        </div>
         <Outlet />
+        <Picker 
+          visible={pickerVisible} 
+          value={[localStorage.getItem("userId")]} 
+          onConfirm={(v:Array<any>) => {
+          localStorage.setItem("userId", v?.[0].toString())
+          localStorage.setItem("username", userList.find((i: any) => i?.id === v[0])?.name)
+        }} 
+          closeOnMaskClick={false} 
+          cancelText={null} 
+          onClose={onCloseHandle} 
+          columns={[localStorage.getItem("users") ? JSON.parse(localStorage.getItem("users") || '[]') : []]} 
+        />
       </div>
       <SafeArea position='bottom' />
     </div>

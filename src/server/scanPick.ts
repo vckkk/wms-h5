@@ -8,7 +8,7 @@ import request from "./request";
 // }
 
 export const scanOrder = (params: any) => {
-  return request("/api/v1/order-operation/scan-order-name-code", {
+  return request("/api/v1/order-operation/new-scan-order-name-code", {
     params
   })
 }
