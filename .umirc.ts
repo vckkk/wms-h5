@@ -6,13 +6,13 @@ export default defineConfig({
   routes: [
     { path: "/", component: "index" },
     { path: "/pick", component: "@/pages/pick", title:"商品分拣" },
-
+    { path: "/*", component: "@/pages/404"}
   ],
   npmClient: 'yarn',
   extraPostCSSPlugins: [
     require('postcss-px-to-viewport')({
       viewportWidth: 750, // 视口宽度，对应设计稿的宽度，一般是 375 或 750
-      viewportHeight: 1334, // 视口高度，根据 750 设备的宽度来指定，一般指定 1334 也可以不配置
+      // viewportHeight: 1334, // 视口高度，根据 750 设备的宽度来指定，一般指定 1334 也可以不配置
       unitPrecision: 3, // 指定 `px` 转换为视口单位值的小数位数
       viewportUnit: 'vw', // 指定需要转换成的视口单位，建议使用 vw
       selectorBlackList: ['.ignore', '.hairlines'], // 指定不转换为视口单位的类，可以自定义，可以无限添加，建议定义一至两个通用的类名

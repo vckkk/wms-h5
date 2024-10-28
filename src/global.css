@@ -11,17 +11,22 @@
   --adm-font-size-9: 34px;
   --adm-font-size-10: 36px;
   --adm-font-size-main: var(--adm-font-size-5, 26px);
-  --item-height: 45px;
+
   .adm-toast-main {
     /* font-size: 26px !important; */
     width: 40vw !important;
     max-width: 40vw !important;
     height: 220px !important;
     text-align: center !important;
+  }    
+  .adm-picker {
+    height: 660px !important;
+    --item-height: 11vw;
   }
 }
 
 html, body {
   padding: 0;
   margin: 0;
+  background-color: #f8f8f8;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Divider, Grid } from 'antd-mobile'
+import { Card, Grid } from 'antd-mobile'
 import { history } from 'umi';
 import { EyeOutline, ScanCodeOutline, TravelOutline } from 'antd-mobile-icons';
 
@@ -17,8 +17,7 @@ const Home = () => {
     {
       menus.map(item => {
         return (
-          <div>
-            <Divider style={{fontSize: '24px'}}>{item.module}</Divider>
+          <Card className={styles.card}>
             <Grid gap={8} columns={4}>
             {
             item.items.map(item => {
@@ -31,7 +30,7 @@ const Home = () => {
             })
           }
         </Grid>
-          </div>
+          </Card>
         )
       })
     }

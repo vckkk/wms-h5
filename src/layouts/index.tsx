@@ -1,6 +1,6 @@
 
-import { Link, Outlet } from 'umi';
-import { NavBar, Picker, SafeArea, Toast } from 'antd-mobile'
+import { Link, Outlet, useLocation } from 'umi';
+import { Avatar, NavBar, Picker, SafeArea, Toast } from 'antd-mobile'
 import { useEffect, useRef, useState } from "react";
 // import { getAccessToken, getTicket } from '../server/sign';
 import Crypto from "crypto-js"
@@ -18,6 +18,8 @@ export default function Layout() {
   const [pickerVisible, setPickerVisible] = useState(false);
   const timestamp = useRef(Math.round(+new Date() / 1000))
   const [userList, setUserList] = useState<Array<any>>([])
+
+  const location = useLocation()
   useEffect(()=>{
     const ua = navigator.userAgent.toLowerCase();
 
@@ -101,9 +103,15 @@ export default function Layout() {
     <div>
       <SafeArea position='top' />
       <div className={styles.container}>
-        <div className={styles.nav}>
-          <span onClick={() => setPickerVisible(true)}>{localStorage.getItem("username") || '未登录'}</span>
-        </div>
+        {
+          location.pathname === '/' && 
+          <div className={styles.nav}>
+            <div className={styles.avatar}>
+              <Avatar src="" style={{'--border-radius': '50%', '--size': '11vw'}} />
+              <span onClick={() => setPickerVisible(true)}>{localStorage.getItem("username") || '未登录'}</span>
+            </div>
+          </div>
+        }
         <Outlet />
         <Picker 
           visible={pickerVisible} 
@@ -112,7 +120,6 @@ export default function Layout() {
           localStorage.setItem("userId", v?.[0].toString())
           localStorage.setItem("username", userList.find((i: any) => i?.id === v[0])?.name)
         }} 
-          // style={{"--item-height": "44px"}}
           closeOnMaskClick={false} 
           cancelText={null} 
           onClose={onCloseHandle} 
