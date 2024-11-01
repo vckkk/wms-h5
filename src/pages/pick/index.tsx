@@ -73,7 +73,7 @@ const Scan = () => {
       {loading && <SpinLoading  style={{ '--size': '48px' , margin: '240px auto'}} /> }
       {orderName.order_name && !skuInfo.ext_sku && 
         <div className={styles.orderName}>
-          <div>当前订单号：{orderName.order_name}</div>
+          <div className={styles.orderNameTitle}>{orderName.order_name}</div>
           <div>履约进度: {orderName.approved_count ||0}/{orderName.total_rows||0}</div>
         </div>
       }

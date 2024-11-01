@@ -1,5 +1,6 @@
 import { defineConfig } from "umi";
 import path from 'path'
+import request from './src/server/request';
 
 export default defineConfig({
   title: "商品分拣",

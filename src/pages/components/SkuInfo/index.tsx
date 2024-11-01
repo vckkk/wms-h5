@@ -41,7 +41,7 @@ const SkuInfo = (props:Props) => {
     pickOrder({order_index: props?.order_index, order_name: props?.orderName.order_name, aggregation_operator: localStorage.getItem("userId") || null }).then(res => {
       if (res.success === true){
         scanOrder({order_name: props?.orderName.order_name}).then((res:any) => {
-          if(res.success === true && res.result?.status === 1) {
+          if(res.success === true && +res.result?.status === 1) {
             Toast.show({content: '分拣完成，当前订单已履约完成！'})
             setSkuInfo({})
             getOrder(props?.orderName.order_name)
