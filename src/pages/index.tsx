@@ -10,7 +10,7 @@ const Home = () => {
     setMenus([
       {module: "质检", items:[{name:'质检', path: "/sign", icon: <EyeOutline style={{color: "#ff4800"}}/>}]},
       {module: "分拣", items:[{name: '分拣', path: "/pick", icon: <ScanCodeOutline style={{color: "#1677ff"}} />}]},
-      {module: "出库", items:[{name: '打包', path: "/package", icon: <TravelOutline style={{color: "green"}} /> }]},
+      {module: "出库", items:[{name: '打包', path: "/printPackage", icon: <TravelOutline style={{color: "green"}} /> }]},
     ])
   },[])
   return <div className={styles.home}>

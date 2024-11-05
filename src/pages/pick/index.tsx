@@ -1,5 +1,5 @@
 import { useRef, useState}  from 'react'
-import {Button, Image, SearchBar, ImageViewer,Toast, SpinLoading }from 'antd-mobile'
+import { Button, Image, SearchBar, ImageViewer,Toast, SpinLoading }from 'antd-mobile'
 import { ScanningOutline } from 'antd-mobile-icons';
 import { getRealStr } from '@/utils'
 import "@/global.css"

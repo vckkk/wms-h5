@@ -7,6 +7,7 @@ export default defineConfig({
   routes: [
     { path: "/", component: "index" },
     { path: "/pick", component: "@/pages/pick", title:"商品分拣" },
+    { path: "/printPackage", component: "@/pages/outStore/print", title:"打印面单" },
     { path: "/*", component: "@/pages/404"}
   ],
   npmClient: 'yarn',
