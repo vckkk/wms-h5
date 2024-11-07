@@ -2,7 +2,7 @@ import { useRef, useState}  from 'react'
 import { Button, Image, ImageViewer,Toast, Result,Tag, Input }from 'antd-mobile'
 import styles from './index.less'
 import { getRealStr } from '@/utils'
-import { pickOrder } from '@/server/scanPick'
+import { pickOrder, scanOrder } from '@/server/scanPick'
 interface Props { 
   ext_sku: string
   aggregation_status: string
@@ -21,10 +21,12 @@ interface Props {
   setSkuInfo:(info:any)=>{}
   onFocusHandle:()=>{}
   orderName: any
+  aggregation_operator: any
+  getOrder: (params:any) => {}
 }
 
 const SkuInfo = (props:Props) => {
-  const { setSkuInfo,onFocusHandle } = props;
+  const { setSkuInfo,getOrder } = props;
   const [viewVisible, setViewVisible] = useState(false)
   const [result, setResult] = useState<any>({})
   const [testStr, setTestStr] = useState<any>("")
@@ -35,9 +37,17 @@ const SkuInfo = (props:Props) => {
   }
 
   const pickSku2Cell = () => {
-    // fetch 
-    pickOrder({order_index: props?.order_index, order_name: props?.orderName }).then(res => {
+    // fetch aggregation_operator
+    pickOrder({order_index: props?.order_index, order_name: props?.orderName.order_name, aggregation_operator: localStorage.getItem("userId") || null }).then(res => {
       if (res.success === true){
+        scanOrder({order_name: props?.orderName.order_name}).then((res:any) => {
+          if(res.success === true && +res.result?.status === 1) {
+            Toast.show({content: '分拣完成，当前订单已履约完成！'})
+            setSkuInfo({})
+            getOrder(props?.orderName.order_name)
+            return 
+          } 
+        })
         props.onFocusHandle()
       } else {
         setResult({status: 'error',title: `放入错误,${res.error_message}`})
@@ -47,7 +57,6 @@ const SkuInfo = (props:Props) => {
 
   const backToScan = () => {
     setSkuInfo({})
-    // onFocusHandle()
   }
 
   return (
@@ -76,7 +85,7 @@ const SkuInfo = (props:Props) => {
                 }
               </div>
               <div style={{display:'flex', alignItems:'center'}}>分拣状态：{props?.aggregation_status === "unfinished" ? <Tag style={{fontSize: 17}} color='danger'>未分拣</Tag> : <Tag style={{fontSize: 17}} color='success'>已分拣</Tag>}</div>
-              <div>分拣人：{props?.quality_check_operator} </div>
+              <div>分拣人：{JSON.parse(localStorage.getItem("users") || "[]")?.find(i => +i.value === +props?.aggregation_operator)?.label || '-'} </div>
               <div>分拣时间：{props?.aggregation_time ? new Date(props?.aggregation_time).toLocaleString() : "-"}</div>
             </div>
             <ImageViewer 
@@ -87,7 +96,10 @@ const SkuInfo = (props:Props) => {
               }}
               />
             <div className={styles.btmOpt}>
-              <Button color='primary' fill='outline' onClick={()=>setSkuInfo({})}>返回</Button>
+              <Button color='primary' fill='outline' onClick={()=>{
+                setSkuInfo({});
+                getOrder(props?.orderName.order_name)
+              }}>返回</Button>
               <Button color='primary' disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</Button>
               {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
             </div>
