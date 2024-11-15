@@ -1,4 +1,4 @@
-import { useRef, useState}  from 'react'
+import { useEffect, useRef, useState}  from 'react'
 import { Button, Image, SearchBar, ImageViewer,Toast, SpinLoading }from 'antd-mobile'
 import { ScanningOutline } from 'antd-mobile-icons';
 import { getRealStr } from '@/utils'
@@ -6,12 +6,14 @@ import "@/global.css"
 import styles from './index.less'
 import SkuInfo from '@/pages/components/SkuInfo/index';
 import { scanOrder, scanSku } from '@/server/scanPick';
+import { useSearchParams, useParams } from 'umi'
 const Scan = () => {
   const searchRef = useRef<any>(null)
   const [orderId, setOrderId] = useState<any>("")
   const [orderName, setOrderName] = useState<any>({})
   const [skuInfo, setSkuInfo] = useState<any>({})
   const [loading, setLoading] = useState<boolean>(false)
+  const [params] = useSearchParams()
   // 订单扫码、sku
   const onFocusHandle = () => {
     // 调用wx扫码获取code
@@ -33,11 +35,24 @@ const Scan = () => {
     });
     searchRef?.current?.blur()
   }
+
+  // 支持外部跳转
+  useEffect(() => {
+    // console.log(params);
+    let queryParams:any = {};
+    // 将所有查询参数添加到对象中
+    for (const [key, value] of params) {
+      queryParams[key] = value;
+    }
+    if(queryParams.order_name && queryParams.order_index) {
+      setOrderName({order_name: queryParams.order_name})
+      getSkuInfo(queryParams.order_index, queryParams.order_name)
+    }
+  },[params])
   
   //控件search
   const onSearchHandle = () => {
     orderName.order_name ? getSkuInfo(orderId) : getOrder()
-    
   }
   const getOrder = (params?: string) => {
     //fetch 后清空value
@@ -54,9 +69,10 @@ const Scan = () => {
     })
   }
 
-  const getSkuInfo = (code: string) => {
+  const getSkuInfo = (code: string, name?: string ) => {
     setLoading(true)
-    scanSku({"order_index": code, "order_name": orderName.order_name}).then((res:any) => {
+    console.log(code, orderName.order_name);
+    scanSku({"order_index": code, "order_name": orderName.order_name || name}).then((res:any) => {
       if(res.success === true) {
         setSkuInfo(res?.result)
       } else {
