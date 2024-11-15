@@ -5,8 +5,9 @@ import { getRealStr } from '@/utils'
 import "@/global.css"
 import styles from './index.less'
 import SkuInfo from '@/pages/components/SkuInfo/index';
-import { scanOrder, scanSku } from '@/server/scanPick';
+import { scanOrder, scanSku, scanPurchase } from '@/server/scanPick';
 import { useSearchParams, useParams } from 'umi'
+
 const Scan = () => {
   const searchRef = useRef<any>(null)
   const [orderId, setOrderId] = useState<any>("")
@@ -14,6 +15,8 @@ const Scan = () => {
   const [skuInfo, setSkuInfo] = useState<any>({})
   const [loading, setLoading] = useState<boolean>(false)
   const [params] = useSearchParams()
+  const [step, setStep] = useState<number>(1)
+
   // 订单扫码、sku
   const onFocusHandle = () => {
     // 调用wx扫码获取code
@@ -69,9 +72,25 @@ const Scan = () => {
     })
   }
 
-  const getSkuInfo = (code: string, name?: string ) => {
+
+  const getSkuInfo = (code: string, name?: string) => {
+    // 合并短码扫码 step1 扫描单号不变， step2 正常流程扫sku即order_index 合并流程：此时扫描的信息为M开头，即调用新接口，下一个页面只展示供应商信息
+    const isPurchase = code.toLocaleUpperCase().startsWith('M');
     setLoading(true)
-    console.log(code, orderName.order_name);
+    if(isPurchase) {
+      scanPurchase({purchase_index: code}).then((res: any)=>{
+        if(res.success === true) {
+          setSkuInfo(res?.result)
+        } else {
+          setSkuInfo({})
+        }
+      }).finally(() => {
+        setLoading(false)
+        setOrderId("")
+      })
+
+      return
+    }
     scanSku({"order_index": code, "order_name": orderName.order_name || name}).then((res:any) => {
       if(res.success === true) {
         setSkuInfo(res?.result)
@@ -83,11 +102,19 @@ const Scan = () => {
       setOrderId("")
     })
   }
+
+  useEffect(() => {
+    if(skuInfo.ext_sku || skuInfo.purchase_index) {
+      setStep(2) // SKU页面
+    } else {
+      setStep(1) // 订单页面
+    }
+  },[skuInfo])
   return (
     <div className={styles.content}>
-      {!skuInfo.ext_sku && <SearchBar placeholder={orderName?.order_name? '请扫描商品':'请扫描订单号'} style={{'--height': '32px',}} searchIcon={<ScanningOutline onClick={onFocusHandle} />} value={orderId} onChange={setOrderId} ref={searchRef}  onSearch={onSearchHandle}/>}
+      { step===1 && <SearchBar placeholder={orderName?.order_name? '请扫描商品':'请扫描订单号'} style={{'--height': '32px',}} searchIcon={<ScanningOutline onClick={onFocusHandle} />} value={orderId} onChange={setOrderId} ref={searchRef}  onSearch={onSearchHandle}/>}
       {loading && <SpinLoading  style={{ '--size': '48px' , margin: '240px auto'}} /> }
-      {orderName.order_name && !skuInfo.ext_sku && 
+      {orderName.order_name && step	=== 1 && 
         <div className={styles.orderName}>
           <div className={styles.orderNameTitle}>{orderName.order_name}</div>
           <div>履约进度: {orderName.approved_count ||0}/{orderName.total_rows||0}</div>
@@ -95,10 +122,10 @@ const Scan = () => {
       }
       <div>  
         {
-          skuInfo.ext_sku  && 
+          step === 2 && 
           <SkuInfo {...skuInfo} orderName={orderName} setSkuInfo={setSkuInfo} onFocusHandle={onFocusHandle} getOrder={getOrder} /> 
         }
-        { !skuInfo.ext_sku && <div className={styles.btmScan}>
+        { step === 1 && <div className={styles.btmScan}>
           <Button size='large' color='primary' disabled={orderName.status === 1} style={{"--border-radius": "50%"}} onClick={onFocusHandle}>
             <ScanningOutline />
           </Button>
@@ -106,7 +133,7 @@ const Scan = () => {
         }
       </div>
       {/* <Button  color='primary' onClick={()=> getSkuInfo("15367")} block>测试</Button> */}
-      {orderName.order_name && !skuInfo.ext_sku  && <Button className={styles.btnBack} size='large' color='primary' onClick={()=>setOrderName({})} block>返回</Button>}
+      {orderName.order_name && step	=== 1  && <Button className={styles.btnBack} size='large' color='primary' onClick={()=>setOrderName({})} block>返回</Button>}
     </div>
   )
 }
