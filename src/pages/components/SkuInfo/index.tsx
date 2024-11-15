@@ -22,7 +22,10 @@ interface Props {
   onFocusHandle:()=>{}
   orderName: any
   aggregation_operator: any
-  getOrder: (params:any) => {}
+  getOrder: (params:any) => {},
+  purchase_index: string,
+  message: string,
+  supplier_name: string
 }
 
 const SkuInfo = (props:Props) => {
@@ -38,7 +41,21 @@ const SkuInfo = (props:Props) => {
 
   const pickSku2Cell = () => {
     // fetch aggregation_operator
-    pickOrder({order_index: props?.order_index, order_name: props?.orderName.order_name, aggregation_operator: localStorage.getItem("userId") || null }).then(res => {
+    const params:any = {
+      order_name: props?.orderName.order_name, aggregation_operator: localStorage.getItem("userId") || null
+    }
+   //order_index: props?.order_index,
+    if(props?.order_index) {
+      params.order_index = props?.order_index
+      delete params.purchase_index
+    } 
+
+    if(props?.purchase_index) {
+      params.purchase_index = props?.purchase_index
+      delete params.order_index
+    }
+
+    pickOrder(params).then(res => {
       if (res.success === true){
         scanOrder({order_name: props?.orderName.order_name}).then((res:any) => {
           if(res.success === true && +res.result?.status === 1) {
@@ -72,21 +89,33 @@ const SkuInfo = (props:Props) => {
           }
         />
         : <div>
-            <Image fit='fill'  height={300} onClick={()=>setViewVisible(true)} src={props?.image_url} />
+    
             <div style={{fontSize: 18}}>
-              <div className={styles.skuName}>{props?.order_name}-{props?.position}</div>
-              <div>SKU编码：{props.ext_sku}</div>
-              <div>数量：{props?.quantity}</div>
-              <div>变体名：
-                {
-                  props?.ext_skuinfos && JSON.parse(props?.ext_skuinfos).map((item:any)=>{
-                    return <span>{item?.name}-{item?.value}</span>
-                  })
-                }
-              </div>
-              <div style={{display:'flex', alignItems:'center'}}>分拣状态：{props?.aggregation_status === "unfinished" ? <Tag style={{fontSize: 17}} color='danger'>未分拣</Tag> : <Tag style={{fontSize: 17}} color='success'>已分拣</Tag>}</div>
-              <div>分拣人：{JSON.parse(localStorage.getItem("users") || "[]")?.find(i => +i.value === +props?.aggregation_operator)?.label || '-'} </div>
-              <div>分拣时间：{props?.aggregation_time ? new Date(props?.aggregation_time).toLocaleString() : "-"}</div>
+              {
+                props?.purchase_index ? 
+                <div style={{marginTop: 22}}>
+                  <div className={styles.longString}>{props?.supplier_name}</div>
+                  <div className={styles.longString}>{props?.message}</div>
+                </div>
+                :
+                <div>
+                  <Image fit='fill'  height={300} onClick={()=>setViewVisible(true)} src={props?.image_url} />
+                  <div className={styles.skuName}>{props?.order_name}-{props?.position}</div>
+                  <div>SKU编码：{props.ext_sku}</div>
+                  <div>数量：{props?.quantity}</div>
+                  <div>变体名：
+                    {
+                      props?.ext_skuinfos && JSON.parse(props?.ext_skuinfos).map((item:any)=>{
+                        return <span>{item?.name}-{item?.value}</span>
+                      })
+                    }
+                  </div>
+                  <div style={{display:'flex', alignItems:'center'}}>分拣状态：{props?.aggregation_status === "unfinished" ? <Tag style={{fontSize: 17}} color='danger'>未分拣</Tag> : <Tag style={{fontSize: 17}} color='success'>已分拣</Tag>}</div>
+                  <div>分拣人：{JSON.parse(localStorage.getItem("users") || "[]")?.find(i => +i.value === +props?.aggregation_operator)?.label || '-'} </div>
+                  <div>分拣时间：{props?.aggregation_time ? new Date(props?.aggregation_time).toLocaleString() : "-"}</div>
+                </div>
+              }
+
             </div>
             <ImageViewer 
               visible={viewVisible} 
