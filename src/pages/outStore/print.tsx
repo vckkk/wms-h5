@@ -44,6 +44,7 @@ const Print = () => {
       })
       return 
     }
+    setLoading(true)
     printPDF({order_name: code || orderName}).then(res => {
       Toast.show({
         icon: 'success',
@@ -51,6 +52,7 @@ const Print = () => {
       })
     }).finally(()=>{
       setOrderName("")
+      setLoading(false)
       // searchRef?.current?.blur()
     })
   }

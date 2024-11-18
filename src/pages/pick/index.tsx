@@ -6,6 +6,7 @@ import "@/global.css"
 import styles from './index.less'
 import SkuInfo from '@/pages/components/SkuInfo/index';
 import { scanOrder, scanSku, scanPurchase } from '@/server/scanPick';
+import { useSearchParams, useParams } from 'umi'
 const Scan = () => {
   const searchRef = useRef<any>(null)
   const [orderId, setOrderId] = useState<any>("")
@@ -14,6 +15,7 @@ const Scan = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [step, setStep] = useState<number>(1)
 
+  const [params] = useSearchParams()
   // 订单扫码、sku
   const onFocusHandle = () => {
     // 调用wx扫码获取code
@@ -35,11 +37,24 @@ const Scan = () => {
     });
     searchRef?.current?.blur()
   }
+
+  // 支持外部跳转
+  useEffect(() => {
+    // console.log(params);
+    let queryParams:any = {};
+    // 将所有查询参数添加到对象中
+    for (const [key, value] of params) {
+      queryParams[key] = value;
+    }
+    if(queryParams.order_name && queryParams.order_index) {
+      setOrderName({order_name: queryParams.order_name})
+      getSkuInfo(queryParams.order_index, queryParams.order_name)
+    }
+  },[params])
   
   //控件search
   const onSearchHandle = () => {
     orderName.order_name ? getSkuInfo(orderId) : getOrder()
-    
   }
   const getOrder = (params?: string) => {
     //fetch 后清空value
@@ -57,7 +72,7 @@ const Scan = () => {
   }
 
 
-  const getSkuInfo = (code: string) => {
+  const getSkuInfo = (code: string, name?: string ) => {
     // 合并短码扫码 step1 扫描单号不变， step2 正常流程扫sku即order_index 合并流程：此时扫描的信息为M开头，即调用新接口，下一个页面只展示供应商信息
     const isPurchase = code.toLocaleUpperCase().startsWith('M');
     setLoading(true)
@@ -75,7 +90,7 @@ const Scan = () => {
 
       return
     }
-    scanSku({"order_index": code, "order_name": orderName.order_name}).then((res:any) => {
+    scanSku({"order_index": code, "order_name": orderName.order_name || name}).then((res:any) => {
       if(res.success === true) {
         setSkuInfo(res?.result)
       } else {
