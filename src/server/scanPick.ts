@@ -25,3 +25,7 @@ export const pickOrder = (params: any) => {
     data: params
   })
 }
+
+export const scanPurchase = (params: any) => {
+  return request("/api/v1/order-operation/get-purchase-by-index", {params})
+}
