@@ -7,6 +7,7 @@ import Crypto from "crypto-js"
 import styles from './index.less';
 import { getSign, getUsers } from '@/server/sign';
 import VConsole from 'vconsole'
+import { useSearchParams, useParams } from 'umi'
 
 
 const node_env = process.env.NODE_ENV
@@ -18,6 +19,8 @@ export default function Layout() {
   const [pickerVisible, setPickerVisible] = useState(false);
   const timestamp = useRef(Math.round(+new Date() / 1000))
   const [userList, setUserList] = useState<Array<any>>([])
+  const [params] = useSearchParams()
+
 
   const location = useLocation()
   useEffect(()=>{
@@ -56,6 +59,15 @@ export default function Layout() {
   },[])
 
   useEffect(()=>{
+
+    let queryParams:any = {};
+    // 将所有查询参数添加到对象中
+    for (const [key, value] of params) {
+      queryParams[key] = value;
+    }
+    if(queryParams.order_name && queryParams.order_index) {
+      return
+    }
     if(!pickerVisible && !localStorage.getItem("username")){
       Toast.show({content: '请先登录', position: 'top'})
       setPickerVisible(true)
