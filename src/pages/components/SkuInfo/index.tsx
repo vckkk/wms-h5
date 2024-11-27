@@ -1,4 +1,4 @@
-import { useRef, useState}  from 'react'
+import { useEffect, useRef, useState}  from 'react'
 import { Button, Image, ImageViewer,Toast, Result,Tag, Input }from 'antd-mobile'
 import styles from './index.less'
 import { getRealStr } from '@/utils'
@@ -29,10 +29,19 @@ interface Props {
 }
 
 const SkuInfo = (props:Props) => {
+  const ua = navigator.userAgent;
   const { setSkuInfo,getOrder } = props;
   const [viewVisible, setViewVisible] = useState(false)
   const [result, setResult] = useState<any>({})
-  const [testStr, setTestStr] = useState<any>("")
+  const [isPC, setIsPC] = useState<any>(!/iPhone|iPad|iPod|Android/i.test(ua))
+  // 判断pc采用非h5样式
+  useEffect(() => {
+    if(/iPhone|iPad|iPod|Android/i.test(ua)) {
+      setIsPC(false)
+    } else {
+      setIsPC(true)
+    }
+  },[])
     // 分拣扫码
   const onScanPickHandle = () => {
     // 先确认放入
@@ -71,7 +80,7 @@ const SkuInfo = (props:Props) => {
       }
     })
   }
-
+  
   const backToScan = () => {
     setSkuInfo({})
   }
@@ -99,9 +108,14 @@ const SkuInfo = (props:Props) => {
                 </div>
                 :
                 <div>
-                  <Image fit='fill'  height={300} onClick={()=>setViewVisible(true)} src={props?.image_url} />
-                  <div className={styles.skuName}>{props?.order_name}-{props?.position}</div>
-                  <div>SKU编码：{props.ext_sku}</div>
+                  {
+                    isPC ? <img style={{width: '100%', height: '420px', objectFit:'fill'}} src={props?.image_url}  /> :  <Image fit='fill'  height={300} onClick={()=>setViewVisible(true)} src={props?.image_url} />
+
+                  }
+                  {
+                    isPC ? <h1>{props?.order_name}-{props?.position}</h1>: <div className={styles.skuName}>{props?.order_name}-{props?.position}</div>
+                  }
+                  <div>SKU编码：{props.ext_sku}</div>                 
                   <div>数量：{props?.quantity}</div>
                   <div>变体名：
                     {
@@ -124,17 +138,22 @@ const SkuInfo = (props:Props) => {
                 setViewVisible(false)
               }}
               />
-            <div className={styles.btmOpt}>
-              <Button color='primary' fill='outline' onClick={()=>{
-                setSkuInfo({});
-                getOrder(props?.orderName.order_name)
-              }}>返回</Button>
-              <Button color='primary' disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</Button>
-              {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
-            </div>
+              {
+                isPC ? 
+                <div>
+                  <button style={{width:'128px', height:'64px', fontSize: 18, background: '#00b578', borderRadius: '8px',border: 'none', color: '#fff', margin: '0 auto', display: 'block'}} disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</button>
+                </div> : 
+                <div className={styles.btmOpt}>
+                  <Button color='primary' fill='outline' onClick={()=>{
+                  setSkuInfo({});
+                  getOrder(props?.orderName.order_name)
+                  }}>返回</Button>
+                  <Button color='primary' disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</Button>
+                {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
+              </div>
+              }
         </div>
       }
-
     </div>
   )
 } 
