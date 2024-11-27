@@ -1,5 +1,5 @@
 module.exports = {
-  // extends: require.resolve('umi/eslint'),
+  extends: require.resolve('umi/eslint'),
   plugins: ["prettier"],
   // 根据个人习惯自定义rule
   rules: {
