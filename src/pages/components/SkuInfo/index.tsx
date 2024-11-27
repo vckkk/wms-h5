@@ -27,7 +27,6 @@ interface Props {
   message: string,
   supplier_name: string
 }
-
 const SkuInfo = (props:Props) => {
   const ua = navigator.userAgent;
   const { setSkuInfo,getOrder } = props;
@@ -80,7 +79,7 @@ const SkuInfo = (props:Props) => {
       }
     })
   }
-  
+
   const backToScan = () => {
     setSkuInfo({})
   }
@@ -145,9 +144,11 @@ const SkuInfo = (props:Props) => {
                 </div> : 
                 <div className={styles.btmOpt}>
                   <Button color='primary' fill='outline' onClick={()=>{
-                  setSkuInfo({});
-                  getOrder(props?.orderName.order_name)
-                  }}>返回</Button>
+                      setSkuInfo({});
+                      getOrder(props?.orderName.order_name)
+                    }}>
+                    返回
+                  </Button>
                   <Button color='primary' disabled={props?.aggregation_status === "finished"} onClick={onScanPickHandle}>确认，继续扫</Button>
                 {/* <Button color='primary' onClick={() => pickSku2Cell(testStr)}>拣货扫扫码</Button> */}
               </div>

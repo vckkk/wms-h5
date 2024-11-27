@@ -1,5 +1,6 @@
 module.exports = {
-  extends: require.resolve('@umijs/lint'),
+  // extends: require.resolve('umi/eslint'),
+  plugins: ["prettier"],
   // 根据个人习惯自定义rule
   rules: {
     'no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: true }], // 允许函数参数、解构未使用
