@@ -114,7 +114,7 @@ const SkuInfo = (props: Props) => {
             ) : (
               <div>
                 {isPC ? (
-                  <img style={{ width: '100%', height: '420px', objectFit: 'fill' }} src={props?.image_url} />
+                  <img style={{ width: '100%', height: '500px', objectFit: 'contain' }} src={props?.image_url} />
                 ) : (
                   <Image fit="fill" height={300} onClick={() => setViewVisible(true)} src={props?.image_url} />
                 )}
