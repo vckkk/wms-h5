@@ -1,0 +1,10 @@
+{
+  "printWidth": 120,
+  "singleQuote": true,
+  "useTabs": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "proseWrap": "never",
+  "overrides": [{ "files": ".prettierrc", "options": { "parser": "json" } }],
+  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-packagejson"]
+}
