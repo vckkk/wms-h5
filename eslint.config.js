@@ -5,6 +5,8 @@ module.exports = {
   rules: {
     'no-unused-vars': ['error', { vars: 'all', args: 'none', ignoreRestSiblings: true }], // 允许函数参数、解构未使用
     eqeqeq: 'off',
+    "semi": [2, "always"],
+    "comma-dangle": [2, "always-multiline"],
     'no-console': 'off',
     'no-console': 'warn',
     'prefer-const': 'warn',
