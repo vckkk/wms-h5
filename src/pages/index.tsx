@@ -15,12 +15,12 @@ const Home = () => {
   },[])
   return <div className={styles.home}>
     {
-      menus.map(item => {
+      menus.map((item: { items: any[]; }) => {
         return (
           <Card className={styles.card}>
             <Grid gap={8} columns={4}>
             {
-            item.items.map(item => {
+            item.items.map((item) => {
               return <Grid.Item key={item.name} onClick={() => history.push(item.path)}>
                 <div className={styles.menuItem}>
                   {item.icon}
@@ -29,7 +29,7 @@ const Home = () => {
               </Grid.Item>
             })
           }
-        </Grid>
+          </Grid>
           </Card>
         )
       })
